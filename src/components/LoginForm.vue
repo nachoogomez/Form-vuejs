@@ -1,19 +1,24 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { useUserStore } from '../stores/userStore'
+import type { User } from '../models/userModel'
 
 // Usamos el store para guardar los datos del usuario
 const store = useUserStore()
 
 // Creamos un objeto temporal para los datos del formulario
-const formUser = ref({
+const formUser: User = ref({
   username: '',
   password: '',
   rememberMe: false
 })
 
+const router = useRouter()
+
 const submitForm = () => {
   store.setUser(formUser.value)
+  router.push('/')
 }
 </script>
 
@@ -51,7 +56,7 @@ const submitForm = () => {
           >
           <a href="#">Olvidaste tu contraseña</a>
         </div>
-        <button type="submit" class="btn">Ingresar</button>
+        <button type="submit" class="btn" >Ingresar</button>
       </form>
       <div v-if="store.user.username" class="new-user">
         <h2>Datos del Usuario</h2>
