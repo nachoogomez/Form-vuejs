@@ -1,6 +1,5 @@
 import { fetchWrapper } from "@/helpers/fetchWrapper";
 import type { User } from "@/models/userModel";
-import router from "@/router";
 import { defineStore } from "pinia";
 
 const baseURL = `${import.meta.env.VITE_API_URL}/users`;
@@ -15,11 +14,10 @@ export const useAuthStore = defineStore ({
            this.auth.data = await fetchWrapper.post(`${baseURL}/authenticate`, {username, password}, {credentials: 'include'});
            this.startRefreshTokenTimer();
         },
-        logout(){
+        async logout(){
             fetchWrapper.post(`${baseURL}/revoke-token`, {}, {credentials: 'include'});
             this.stopRefreshTokenTimer();
             this.auth.data = null;
-            router.push({name: 'login'});
         },
         async refreshToken() {
             this.auth.data = await fetchWrapper.post(`${baseURL}/refresh-token`, {}, {credentials: 'include'});
@@ -31,7 +29,7 @@ export const useAuthStore = defineStore ({
             // Parse JSON 
 
             const jwtBase64 = this.auth.data.jwtToken.split('.')[1];
-            const decodedJwtToken = JSON.parse(atob(jwtBase64[1]));
+            const decodedJwtToken = JSON.parse(atob(jwtBase64));
 
             // Set the time that the jwt will expire
             const expires = new Date(decodedJwtToken.exp * 1000);
