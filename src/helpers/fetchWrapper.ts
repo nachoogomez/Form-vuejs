@@ -18,8 +18,9 @@ function request(method: string) {
             ...requestOptions.headers,
             'Content-Type': 'application/json'
         };
+        requestOptions.body = JSON.stringify(body);
     }
-    requestOptions.body = JSON.stringify(body);
+    
 
     if(credentials) {
         requestOptions.credentials = credentials;
@@ -56,4 +57,5 @@ async function handleResponse(response: Response): Promise<any> {
         const error = (data && data.message) || response.statusText;
         return Promise.reject(error);
     }
+    return data;
 }
