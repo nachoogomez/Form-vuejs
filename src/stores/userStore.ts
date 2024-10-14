@@ -10,8 +10,8 @@ export const useUserStore = defineStore('user', {
     } as User
   }),
   actions: {
-    setUser(newUser: User) {
-      this.user = newUser
+    setUser(user: User) {
+      this.user = user
     }
   }
 })
