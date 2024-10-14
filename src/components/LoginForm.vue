@@ -184,6 +184,8 @@ function handleSubmit (values: any, {setErrors}: any)  {
   border: 3px solid #fff;
   border-bottom-color: transparent;
   border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
   animation: rotate 1s linear infinite ;
 }
 
