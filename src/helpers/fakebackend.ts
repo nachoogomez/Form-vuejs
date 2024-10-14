@@ -1,5 +1,4 @@
 export { fakeBackend };
-
 import type { User              } from '@/models/userModel'
 import type { JwtPayload        } from '@/models/jwtModel';
 import type { AuthReq  } from '@/models/authReqModel';

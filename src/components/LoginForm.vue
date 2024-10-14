@@ -1,69 +1,72 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useUserStore } from '../stores/userStore'
-import type { User } from '../models/userModel'
-
-// Usamos el store para guardar los datos del usuario
-const store = useUserStore()
-
-// Creamos un objeto temporal para los datos del formulario
-const formUser: User = ref({
-  username: '',
-  password: '',
-  rememberMe: false
-})
+import { useAuthStore } from '../stores/authStore'
+import { Form, Field } from 'vee-validate';
+import * as yup from 'yup';
 
 const router = useRouter()
+const authStore = useAuthStore()
 
-const submitForm = () => {
-  store.setUser(formUser.value)
+const schema = yup.object().shape({
+  username: yup.string().required('El nombre de usuario es requerido'),
+  password: yup.string().required('La contraseña es requerida'),
+  rememberMe: yup.boolean()
+})
+
+if(authStore.auth.data){
   router.push('/')
+}
+
+
+function handleSubmit (values: any, {setErrors}: any)  {
+  const {username, password} = values;
+  return authStore.login(username, password).then(() => {
+    router.push('/')
+  }).catch(error => setErrors({apiError: error}))
 }
 </script>
 
 <template>
   <main>
     <div class="wrapper">
-      <form @submit.prevent="submitForm">
+      <Form @submit="handleSubmit" :validation-schema="schema" v-slot="{errors, isSubmitting}">
         <h1>Login</h1>
         <div class="input-bx">
-          <input
-            name="user"
+          <Field
+            name="username"
             type="text"
             placeholder="Usuario"
-            v-model="formUser.username"
             id="username"
+            :class="{'isInvalid': errors.username || errors.apiError }"
             required
           />
           <ion-icon class="icon" name="person-circle"></ion-icon>
         </div>
         <div class="input-bx">
-          <input
+          <Field
             name="password"
+            :class="{'isInvalid': errors.password || errors.apiError }"
             type="password"
-            placeholder="Contraseña"
-            v-model="formUser.password"
+            placeholder="Contraseña"    
             id="password"
             required
           />
           <ion-icon class="icon" name="lock-closed"></ion-icon>
+          <div class="invalid-feedback">{{ errors.password }}</div>
         </div>
         <div class="remember-forgot">
           <label
-            ><input type="checkbox" name="remember" v-model="formUser.rememberMe" id="rememberMe" />
+            ><input type="checkbox" name="remember" id="rememberMe" />
             Recordarme</label
           >
           <a href="#">Olvidaste tu contraseña</a>
         </div>
-        <button type="submit" class="btn" >Ingresar</button>
-      </form>
-      <div v-if="store.user.username" class="new-user">
-        <h2>Datos del Usuario</h2>
-        <p>Usuario: {{ store.user.username }}</p>
-        <p>Contraseña: {{ store.user.password }}</p>
-        <p>Recordarme: {{ store.user.rememberMe ? 'Sí' : 'No' }}</p>
-      </div>
+        <button type="submit" class="btn" >
+          <span v-show="isSubmitting" class="loader" ></span>
+          <p v-show="!isSubmitting">Ingresar</p>
+        </button>
+        <div v-if="errors.apiError" class="invalid-feedback">{{ errors.apiError }}</div>
+      </Form>
     </div>
   </main>
 </template>
@@ -104,8 +107,26 @@ const submitForm = () => {
   padding: 20px 45px 20px 20px;
 }
 
+.input-bx input.isInvalid {
+  color: #dc3545;
+  border-color: 2px solid #dc3545;
+  background: rgba(250, 150, 150, 0.2);
+}
+
 .wrapper .input-bx input::placeholder {
   color: #fff;
+}
+
+.wrapper .input-bx input.isInvalid::placeholder {
+  color: #dc3545;
+}
+
+.invalid-feedback {
+  padding: 0px 16px;
+  margin: 0px;
+  color: #dc3545;
+  font-weight: 600;
+  font-size: 0.8em;
 }
 
 .wrapper .input-bx .icon {
@@ -150,11 +171,25 @@ const submitForm = () => {
   color: #333;
 }
 
-.new-user {
-  margin-top: 20px;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 15px;
-  color: #fff;
+.btn p{
+  font-size: 1.2em;
+  font-weight: 600;
+  color: #333;
 }
+
+.loader{
+  margin: auto;
+  width: 24px;
+  height: 24px;
+  border: 3px solid #fff;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  animation: rotate 1s linear infinite ;
+}
+
+@keyframes rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 </style>
