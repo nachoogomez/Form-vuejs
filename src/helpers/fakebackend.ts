@@ -19,10 +19,29 @@ const user: User = {
     refreshToken: [] 
 }
 
+const user2: User = { 
+    id: 2, 
+    firstName: 'Usuario de', 
+    lastName: 'Prueba', 
+    username: 'prueba', 
+    password: 'test',
+    isAdmin: false, 
+    refreshToken: []
+}
+
 
 // si no hay usuarios creamos uno y lo guardamos en almacenamiento local
-if (!users.length) {
+if (!users.length || users.length < 2) {
     users.push(user);
+    users.push(user2);
+    if(users.length > 2){
+        users.shift()
+    }
+    localStorage.setItem(usersKey, JSON.stringify(users));
+}
+
+if (users.length > 2) {
+    users.shift();
     localStorage.setItem(usersKey, JSON.stringify(users));
 }
 

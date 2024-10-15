@@ -1,6 +1,8 @@
 import { fetchWrapper } from "@/helpers/fetchWrapper";
 import type { User } from "@/models/userModel";
 import { defineStore } from "pinia";
+import { useUserStore } from "./userStore";
+
 
 const baseURL = `${import.meta.env.VITE_API_URL}/users`;
 
@@ -13,15 +15,18 @@ export const useAuthStore = defineStore ({
         async login(username: string, password: string) {
            this.auth.data = await fetchWrapper.post(`${baseURL}/authenticate`, {username, password}, {credentials: 'include'});
            this.startRefreshTokenTimer();
+           this.updateUserStore();
         },
         async logout(){
-            fetchWrapper.post(`${baseURL}/revoke-token`, {}, {credentials: 'include'});
+            await fetchWrapper.post(`${baseURL}/revoke-token`, {}, {credentials: 'include'});
             this.stopRefreshTokenTimer();
             this.auth.data = null;
+            this.updateUserStore();
         },
         async refreshToken() {
             this.auth.data = await fetchWrapper.post(`${baseURL}/refresh-token`, {}, {credentials: 'include'});
             this.startRefreshTokenTimer();
+           
         },
         startRefreshTokenTimer() {
             if(!this.auth.data || !this.auth.data.jwtToken) return;
@@ -43,6 +48,15 @@ export const useAuthStore = defineStore ({
             if(this.auth.refreshTokenTimeOut){
                 clearTimeout(this.auth.refreshTokenTimeOut);
                 this.auth.refreshTokenTimeOut = null;
+            }
+        },
+
+        updateUserStore() {
+            const userStore = useUserStore();
+            if (this.auth.data) {
+                userStore.setUser(this.auth.data);
+            } else {
+                userStore.setUser(null);
             }
         }
     }
