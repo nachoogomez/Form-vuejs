@@ -1,16 +1,15 @@
 <script setup lang="ts">
-import { useUserStore } from '../stores/userStore'
 import { useAuthStore } from '../stores/authStore'
 import { useSesionStore } from '@/stores/sesionSore';
 import { useRouter } from 'vue-router';
 
 const authStore = useAuthStore();
 const router = useRouter();
-const userStore = useUserStore();
 const sesionStore = useSesionStore();
 
-const user = userStore.user
+
 const sesionData = sesionStore.data
+const userData = authStore.auth.data
 
 
 
@@ -34,10 +33,10 @@ function renderUserList() {
 <template>
   <main>
     <div class="wrapper">
-      <h2>Bienvenido {{ user?.firstName }}</h2>
+      <h2>Bienvenido {{ userData?.firstName }}</h2>
       <div class="divider"></div>
-      <p>Nombre: {{ user?.firstName }} {{ user?.lastName }}</p>
-      <p>Rol: {{ getUserRole(user?.isAdmin) }}</p> 
+      <p>Nombre: {{ userData?.firstName }} {{ userData?.lastName }}</p>
+      <p>Rol: {{ getUserRole(userData?.isAdmin) }}</p> 
       <div class="divider"></div>
       <h2>Informacion de sesion:</h2>
       <p>JWT Payload: {{ sesionData?.tokenPayload}}</p>
@@ -48,7 +47,7 @@ function renderUserList() {
       <h2>Lista de usuarios:</h2>
       <ul v-html="renderUserList()"></ul>
       <div class="btns">
-        <button v-if="user?.isAdmin">Agregar nuevo</button>
+        <button v-if="userData?.isAdmin">Agregar nuevo</button>
         <div class="divider"></div>
         <button @click="logout">Salir</button>
       </div>
@@ -59,7 +58,7 @@ function renderUserList() {
 
 <style scoped>
 .wrapper {
-  width: auto;
+  width: 600px;
   background: transparent;
   border: 2px solid rgba(255, 255, 255, 0.2);
   color: #fff;

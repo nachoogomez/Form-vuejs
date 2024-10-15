@@ -9,10 +9,10 @@ export const useSesionStore = defineStore('sesion', {
     state: (): SesionState => ({
         loading: false, 
         data: {
-          tokenPayload: useAuthStore().auth.data?.jwtToken.replace("fake-jwt-token.", "") || "", 
+          tokenPayload: useAuthStore().auth.data?.jwtToken?.replace("fake-jwt-token.", "") || "", 
           createdAt: new Date(), 
-          refreshedAt: new Date(), 
-          expiresAt: new Date(), 
+          refreshedAt: new Date(Date.now() + 10 * 60 * 1000), 
+          expiresAt: new Date(Date.now() + 11 * 60 * 1000), 
         },
       }),
       
@@ -31,12 +31,4 @@ export const useSesionStore = defineStore('sesion', {
 })
 
 
-/*
-user?.jwtToken?.replace("fake-jwt-token.", "") || ""
-if (this.data) {
-            this.data.tokenPayload = payload;
-            this.data.createdAt = createdAt; 
-            this.data.refreshedAt = refreshedAt; 
-            this.data.expiresAt = expiresAt; 
-          }
-*/
+
