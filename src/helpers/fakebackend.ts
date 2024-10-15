@@ -8,6 +8,7 @@ import type { AuthReq  } from '@/models/authReqModel';
 const usersKey = 'vue-3-jwt-refresh-token-users';
 const users: User[] = JSON.parse(localStorage.getItem(usersKey) || '[]');
 
+
 // Agregar un usuario test en localstorage si no hay ninguno
 const user: User = { 
     id: 1, 
@@ -18,7 +19,6 @@ const user: User = {
     isAdmin: true, 
     refreshToken: [] 
 }
-
 const user2: User = { 
     id: 2, 
     firstName: 'Usuario de', 
@@ -26,14 +26,14 @@ const user2: User = {
     username: 'prueba', 
     password: 'test',
     isAdmin: false, 
-    refreshToken: []
+    refreshToken: [] 
 }
 
 
 // si no hay usuarios creamos uno y lo guardamos en almacenamiento local
 if (!users.length || users.length < 2) {
     users.push(user);
-    users.push(user2);
+    users.push(user2)
     if(users.length > 2){
         users.shift()
     }
@@ -56,6 +56,10 @@ function fakeBackend() {
 
             // manejamos las rutas falsas como si hicieramos llamados api
             function handleRoute() {
+                console.info("Methods: ", opts )
+                if(opts === undefined) {
+                    return
+                }
                 const { method } = opts;
                 switch (true) {
                     case url.toString().endsWith('/users/authenticate') && method === 'POST':
@@ -99,15 +103,17 @@ function fakeBackend() {
             function refreshToken() {
                 const refreshToken = getRefreshToken();
                 if (!refreshToken) return unauthorized();
-
+            
                 const user = users.find(x => x.refreshToken.includes(refreshToken));
+                
+                // Add a check to ensure user is not undefined
                 if (!user) return unauthorized();
-
-                // Reemplazar refresh token viejo por uno nuevo y guardar
+            
+                // Rest of the function remains the same
                 user.refreshToken = user.refreshToken.filter(x => x !== refreshToken);
                 user.refreshToken.push(generateRefreshToken());
                 localStorage.setItem(usersKey, JSON.stringify(users));
-
+            
                 return ok({
                     id: user.id,
                     username: user.username,

@@ -9,5 +9,5 @@ export interface User {
   rememberMe?: boolean,
   isAdmin: boolean,
   jwtToken?: string,
-  refreshToken: string[]
+  refreshToken: string[];
 }

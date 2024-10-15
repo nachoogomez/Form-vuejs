@@ -55,6 +55,7 @@ export const useAuthStore = defineStore ({
             const userStore = useUserStore();
             if (this.auth.data) {
                 userStore.setUser(this.auth.data);
+                
             } else {
                 userStore.setUser(null);
             }
