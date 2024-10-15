@@ -22,6 +22,13 @@ function getUserRole(isAdmin: boolean | undefined): string{
   return isAdmin ? 'Administrador' : 'Usuario'
 }
 
+function renderUserList() {
+  const users = JSON.parse(localStorage.getItem('vue-3-jwt-refresh-token-users') || '[]');
+  return users.map((user: { firstName: string; lastName: string ; isAdmin: boolean }) => {
+    return `<li>${user.firstName} ${user.lastName} [${user.isAdmin === true ? 'Administrador' : 'Usuario'}]</li>`;
+  }).join('');
+}
+
 </script>
 
 <template>
@@ -39,7 +46,7 @@ function getUserRole(isAdmin: boolean | undefined): string{
       <p>JWT expira a las: {{ sesionData?.expiresAt.toLocaleString() }}</p>
       <div class="divider"></div>
       <h2>Lista de usuarios:</h2>
-      <p>Nacho</p>
+      <ul v-html="renderUserList()"></ul>
       <div class="btns">
         <button v-if="user?.isAdmin">Agregar nuevo</button>
         <div class="divider"></div>

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import type { SesionState } from '@/models/sesionState'
-import {useUserStore} from '@/stores/userStore'
+import { useAuthStore } from './authStore'
 
 
 
@@ -9,7 +9,7 @@ export const useSesionStore = defineStore('sesion', {
     state: (): SesionState => ({
         loading: false, 
         data: {
-          tokenPayload: useUserStore().user?.jwtToken?.replace("fake-jwt-token.", "") || "",
+          tokenPayload: useAuthStore().auth.data?.jwtToken.replace("fake-jwt-token.", "") || "", 
           createdAt: new Date(), 
           refreshedAt: new Date(), 
           expiresAt: new Date(), 
