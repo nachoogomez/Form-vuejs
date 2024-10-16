@@ -11,7 +11,7 @@ const sesionStore = useSesionStore();
 const sesionData = sesionStore.data
 const userData = authStore.auth.data
 
-
+sesionStore.refreshSesion()
 
 function logout () {
   authStore.logout().then(() => router.push('/login'));
@@ -28,7 +28,9 @@ function renderUserList() {
   }).join('');
 }
 
+//El template no renderiza sesionData en el primerlog (no se pudo solucionar el error)
 </script>
+
 
 <template>
   <main>
@@ -39,9 +41,9 @@ function renderUserList() {
       <p>Rol: {{ getUserRole(userData?.isAdmin) }}</p> 
       <div class="divider"></div>
       <h2>Informacion de sesion:</h2>
-      <p>JWT Payload: {{ sesionData?.tokenPayload}}</p>
+      <p>JWT Payload: {{ sesionData?.tokenPayload }}</p>
       <p>JWT creado a las: {{ sesionData?.createdAt.toLocaleString() }}</p>
-      <p>JWT se refrescara a las: {{ sesionData?.refreshedAt.toLocaleString() }}</p>
+      <p>JWT se refrescara a las: {{ sesionData?.refreshedAt.toDateString() }}</p>
       <p>JWT expira a las: {{ sesionData?.expiresAt.toLocaleString() }}</p>
       <div class="divider"></div>
       <h2>Lista de usuarios:</h2>
@@ -51,7 +53,6 @@ function renderUserList() {
         <div class="divider"></div>
         <button @click="logout">Salir</button>
       </div>
-        
     </div>
   </main>
 </template>
